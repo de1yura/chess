@@ -1,0 +1,32 @@
+.fullboard{
+    width: 820px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+.chessboard {
+    background: lightblue;
+    width: 800px;
+    height: 800px;
+    // display: flex;
+    // flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(8,100px);
+    grid-template-rows: repeat(8,100px);
+}
+
+.letters{
+    display: flex;
+    width: 800px;
+    height: 20px;
+    justify-content: space-around;
+    color: white;
+}
+.numbers{
+    width: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    color: white;
+}
