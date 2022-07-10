@@ -4,17 +4,25 @@
     background: #779556;
     width: 100px;
     height: 100px;
-    img{
-        width: 80px;
-    }
 }
 .whiteTile{
     display: grid;
     place-content: center;
-    img{
-        width: 80px;
-    }
     background-color: white;
     width: 100px;
     height: 100px;
+}
+
+.piece{
+    width: 100px;
+    height: 100px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 80px;
+    &:hover{
+        cursor: grab;
+    }
+    &:active{
+        cursor: grabbing;
+    }
 }
