@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import styles from './Styles/Chessboard.module.scss';
 import { useState } from 'react';
 import Tile from './Tile';
+import Referee from './Referee';
 
 const Chessboard = () => {
 
@@ -11,31 +12,40 @@ const Chessboard = () => {
     const starting = [];
     const [gridX, setGridX] = useState(0);
     const [gridY, setGridY] = useState(0);
-
-
-    for(let i = 0; i < 8; i++){
-        starting.push({image:"/Assets/Pieces/pawn_b.png", x:i, y:6});
-    }
-    for(let i = 0; i < 8; i++){
-        if(i<=4){
-            starting.push({image:`/Assets/Pieces/${i}.png`, x:i, y:7});
-        } else {
-            starting.push({image:`/Assets/Pieces/${-i+7}.png`, x:i, y:7});
-        }
-    }
-
-    for(let i = 0; i < 8; i++){
-        starting.push({image:"/Assets/Pieces/pawn_w.png", x:i, y:1});
-    }
-    for(let i = 0; i < 8; i++){
-        if(i<=4){
-            starting.push({image:`/Assets/Pieces/${i}w.png`, x:i, y:0});
-        } else {
-            starting.push({image:`/Assets/Pieces/${-i+7}w.png`, x:i, y:0});
-        }
-    }
-
     const [pieces, setPieces] = useState(starting);
+    const [active, setActive] = useState(false);
+    const referee = new Referee;
+
+    //Setting up Pieces
+    for(let i = 0; i < 8; i++){
+        starting.push({image:"/Assets/Pieces/pawn_b.png", x:i, y:6, type: "PAWN", team:"BLACK"});
+    }
+
+    for(let i = 0; i < 8; i++){
+        starting.push({image:"/Assets/Pieces/pawn_w.png", x:i, y:1, type: "PAWN", team: "WHITE"});
+    }
+
+    for(let i = 0; i < 2; i++){
+        const t = i === 0 ? "w" : "b";
+        const y = i === 0 ? 0 : 7;
+        const team = i === 0 ? "WHITE" : "BLACK";
+        starting.push({image:`/Assets/Pieces/rook_${t}.png`, x:0, y:y, type:"ROOK", team: team});
+        starting.push({image:`/Assets/Pieces/rook_${t}.png`, x:7, y:y, type:"ROOK", team: team});
+
+        starting.push({image:`/Assets/Pieces/knight_${t}.png`, x:1, y:y, type:"KNIGHT", team: team});
+        starting.push({image:`/Assets/Pieces/knight_${t}.png`, x:6, y:y, type:"KNIGHT", team: team});
+        
+        starting.push({image:`/Assets/Pieces/bishop_${t}.png`, x:2, y:y, type:"BISHOP", team: team});
+        starting.push({image:`/Assets/Pieces/bishop_${t}.png`, x:5, y:y, type:"BISHOP", team: team});
+
+        starting.push({image:`/Assets/Pieces/queen_${t}.png`, x:3, y:y, type:"QUEEN", team: team});
+        starting.push({image:`/Assets/Pieces/king_${t}.png`, x:4, y:y, type:"KING", team: team});
+    }
+    
+
+
+
+
     
     
 
@@ -58,8 +68,6 @@ const Chessboard = () => {
     
     let letters = xAxis.map((x,i)=> <div key={i}>{x}</div>)
     let numbers = yAxis.map((y,j)=> <div key={j }>{y}</div>)
-
-    const [active, setActive] = useState(false);
 
     const grabPiece = (e) => {
         const element = e.target;
@@ -108,16 +116,29 @@ const Chessboard = () => {
         }
     }
 
+
+
     const dropPiece = (e) => {
         if(active){
             const x = Math.floor((e.clientX - boardRef.current.offsetLeft) / 100);
             const y = Math.abs(Math.ceil((e.clientY - boardRef.current.offsetTop - 800) / 100));
 
-            setPieces((value)=> {
-                const new_pieces = value.map((piece)=> { 
+            //UPDATE THE PIECE LOCATION
+            setPieces((current)=> {
+                const new_pieces = current.map((piece)=> { 
+
                     if(piece.x === gridX && piece.y === gridY){
-                        piece.x = x;
-                        piece.y = y;
+                        const validMove = referee.isValidMove(gridX, gridY, x, y, piece.type, piece.team);
+                        
+                        if (validMove){
+                            piece.x = x;
+                            piece.y = y;
+                        } else {
+                            e.target.style.position = 'relative';
+                            e.target.style.removeProperty("top");
+                            e.target.style.removeProperty("left");
+                        }
+                        
                     }
                     return piece;
                 });
@@ -126,14 +147,16 @@ const Chessboard = () => {
             setActive(false);
         }
     }
-    //look into why i need returns here!!!!!!!!
+
+
+
 
   return (
     <div className = {styles.fullboard}>
-        <button onClick = {(e) => {console.log(boardRef.current)}}>click</button>
-        {/* <div className={styles.numbers}>
+        {/* <button onClick = {(e) => {console.log(boardRef.current)}}>click</button> */}
+        <div className={styles.numbers}>
             {numbers}
-        </div> */}
+        </div>
 
         <div 
         onMouseMove={e=> movePiece(e)} 
