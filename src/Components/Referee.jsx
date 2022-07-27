@@ -2,9 +2,18 @@
 
 export default class Referee {
 
-   tileIsOccupied = () => {
-     //add parameters later
+   tileIsOccupied = (x, y, boardState) => {
     console.log("checking if tile is occupied...");
+    console.log(boardState.find((p)=> p.x === x && p.y === y));
+    const piece = boardState.find((p)=> p.x === x && p.y === y);
+
+    if(piece){
+      return true;
+    } else {
+      return false;
+    };
+
+    
    }
 
    isValidMove = (px, py, x, y, type, team, boardState) => {
@@ -17,25 +26,41 @@ export default class Referee {
     if(type === "PAWN") {
       if(team === "WHITE") {
         if(py === 1) {
-          if(px === x && (y - py ===1 || y - py === 2)){
-            if(this.tileIsOccupied()) {
-
+          if(px === x && y - py ===1){
+            if(!this.tileIsOccupied(x, y, boardState)) {
+              return true;
+             }
+            } else if (px === x && y - py === 2) {
+              if(!this.tileIsOccupied(x, y, boardState) && !this.tileIsOccupied(x, y-1, boardState)) {
+                return true;
+              }
             }
-            return true;
-          }
         } else {
           if(px === x && (y - py === 1)) {
-            return true;
+            if(!this.tileIsOccupied(x, y, boardState)) {
+              return true;
+            } else{
+              return false;
+            }
+            
           }
         }
       } else {
         if(py === 6) {
-          if(px === x && (py - y === 1 || py - y === 2)) {
-            return true;
+          if(px === x && py - y === 1 ) {
+            if(!this.tileIsOccupied(x, y, boardState)) {
+              return true;
+            }
+          } else if (px === x && py - y === 2){
+            if(!this.tileIsOccupied(x, y, boardState) && !this.tileIsOccupied(x, y+1, boardState)) {
+              return true;
+            }
           }
         } else {
           if(px === x && (py - y === 1)) {
-            return true;
+            if(!this.tileIsOccupied(x, y, boardState)) {
+              return true;
+            }
           }
         }
       }

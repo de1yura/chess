@@ -128,7 +128,7 @@ const Chessboard = () => {
                 const new_pieces = current.map((piece)=> { 
 
                     if(piece.x === gridX && piece.y === gridY){
-                        const validMove = referee.isValidMove(gridX, gridY, x, y, piece.type, piece.team);
+                        const validMove = referee.isValidMove(gridX, gridY, x, y, piece.type, piece.team, current);
                         
                         if (validMove){
                             piece.x = x;
