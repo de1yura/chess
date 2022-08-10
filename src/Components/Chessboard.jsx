@@ -123,6 +123,13 @@ const Chessboard = () => {
             const x = Math.floor((e.clientX - boardRef.current.offsetLeft) / 100);
             const y = Math.abs(Math.ceil((e.clientY - boardRef.current.offsetTop - 800) / 100));
 
+            const currentPiece = pieces.find((p) => p.x === gridX && p.y === gridY);
+            const attackedPiece = pieces.find(p => p.x === x && p.y === y);
+
+            if(currentPiece){
+                const validMove = referee.isValidMove(gridX, gridY, x, y, currentPiece?.type, currentPiece?.team, pieces);
+            }       
+
             //UPDATE THE PIECE LOCATION
             setPieces((current)=> {
                 const new_pieces = current.map((piece)=> { 

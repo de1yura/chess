@@ -11,18 +11,28 @@ export default class Referee {
     };
    }
 
+   tileIsOccupiedEnemy = (x, y, boardState, team) => {
+    const piece = boardState.find((p) => p.x === x && p.y === y && p.team !== team);
+    if(piece){
+      return true;
+    } else {
+      return false;
+    }
+   }
+
    isValidMove = (px, py, x, y, type, team, boardState) => {
-    console.log("referee");
-    console.log(`previous loc: ${px} ${py}`);
-    console.log(`new loc: ${x} ${y}`);
-    console.log(`type: ${type}`);
-    console.log(`team: ${team}`);
+    // console.log("referee");
+    // console.log(`previous loc: ${px} ${py}`);
+    // console.log(`new loc: ${x} ${y}`);
+    // console.log(`type: ${type}`);
+    // console.log(`team: ${team}`);
 
     if(type === "PAWN"){
+      //MOVEMENT
      const pawnRow = (team === "WHITE") ? 1: 6;
      const pawnDirection = (team === "WHITE") ? 1: -1;
 
-     if(py === pawnRow && y - py === 2*pawnDirection){
+     if(px === x && py === pawnRow && y - py === 2*pawnDirection){
       if(!this.tileIsOccupied(x, y, boardState) && !this.tileIsOccupied(x, y - pawnDirection, boardState)) {
         return true;
       }
@@ -30,7 +40,14 @@ export default class Referee {
       if(!this.tileIsOccupied(x, y, boardState)){
         return true;
       }
+     } else if (x - px === 1||-1 && y - py === pawnDirection){
+       if(this.tileIsOccupiedEnemy(x, y, boardState, team)){
+        return true;
+       }
+
      }
+     //ATTACK
+
     }
     return false;
   }
